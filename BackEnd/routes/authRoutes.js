@@ -1,27 +1,30 @@
-// routes/authRoutes.js
-const express = require('express');
-const { register, login, refreshToken } = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware'); // Import the auth middleware
-const {
+
+import express from "express";
+import {
+  register,
+  login,
+  refreshToken,
+} from "../controllers/authController.js";
+import authMiddleware from "../middlewares/authMiddleware.js"; 
+import {
   validateRegister,
   validateLogin,
   validateRefreshToken,
-} = require('../middleware/validation'); // Import the validation functions
+} from "../utils/validation.js"; 
 
 const router = express.Router();
 
-// Register route with validation
-router.post('/register', validateRegister, register);
+router.post("/register", validateRegister, register);
 
-// Login route with validation
-router.post('/login', validateLogin, login);
 
-// Refresh token route with validation
-router.post('/refresh-token', validateRefreshToken, refreshToken);
+router.post("/login", validateLogin, login);
 
-// Protected route example (requires authentication)
-router.get('/protected', authMiddleware, (req, res) => {
-  res.status(200).json({ message: 'Protected route accessed', user: req.user });
+
+router.post("/refresh-token", validateRefreshToken, refreshToken);
+
+
+router.get("/protected", authMiddleware, (req, res) => {
+  res.status(200).json({ message: "Protected route accessed", user: req.user });
 });
 
-module.exports = router;
+export default router; 

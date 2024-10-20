@@ -8,8 +8,9 @@ import connectDB from "./config/db.js";
 
 import { rateLimiter } from "./middlewares/rateLimiter.js";
 
-import adminRoutes from "./routes/admin.js"; // Import the admin route
-const authRoutes = require('./routes/authRoutes');
+import adminRoutes from "./routes/admin.js"; 
+import authRoutes from "./routes/authRoutes.js"; 
+
 
 dotenv.config();
 const app = express();

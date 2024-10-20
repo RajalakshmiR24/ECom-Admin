@@ -1,6 +1,21 @@
-const Joi = require('joi');
+import Joi from 'joi';
+import mongoose from 'mongoose'; // ES module import for mongoose
 
-// Schema for user registration
+// Mongoose schema for the Auth model
+const authModelSchema = new mongoose.Schema({
+  fullName: { type: String, required: true, minlength: 2, maxlength: 100 },
+  username: { type: String, required: true, minlength: 3, maxlength: 50, unique: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true, minlength: 6 },
+  city: { type: String, maxlength: 100, default: '' },
+  state: { type: String, maxlength: 100, default: '' },
+  country: { type: String, maxlength: 100, default: '' },
+  occupation: { type: String, maxlength: 100, default: '' },
+  phoneNumber: { type: String, maxlength: 15, default: '' },
+  role: { type: String, enum: ['user', 'admin', 'superadmin', 'driver', 'shopkeeper'], default: 'user' },
+});
+
+// Joi schema for user registration
 const authSchema = {
   register: Joi.object({
     fullName: Joi.string().min(2).max(100).required(),
@@ -27,4 +42,8 @@ const authSchema = {
   }),
 };
 
-module.exports = authSchema;
+// Create the Mongoose model
+const Auth = mongoose.model('Auth', authModelSchema);
+
+export default Auth;
+export { authSchema };

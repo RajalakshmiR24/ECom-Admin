@@ -1,11 +1,13 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const { registerSchema } = require('../schemas/authSchema');
-const { generateAccessToken, generateRefreshToken } = require('../utils/token');
+// controllers/authController.js
+import bcrypt from 'bcryptjs';
+import User from '../models/auth.js';
+import { authSchema } from '../models/auth.js';
+import { generateAccessToken, generateRefreshToken } from '../utils/token.js';
+import jwt from 'jsonwebtoken';
 
-// Register User
-exports.register = async (req, res) => {
-  const { error } = registerSchema.validate(req.body);
+// Register
+export const register = async (req, res) => {
+  const { error } = authSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
@@ -45,10 +47,8 @@ exports.register = async (req, res) => {
   }
 };
 
-
-
-// Login User
-exports.login = async (req, res) => {
+// Login
+export const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -69,23 +69,21 @@ exports.login = async (req, res) => {
   }
 };
 
-  
 // Token refresh
-exports.refreshToken = (req, res) => {
-    const { token } = req.body;
-  
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
+export const refreshToken = (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid refresh token' });
     }
-  
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: 'Invalid refresh token' });
-      }
-  
-      // Generate a new access token
-      const accessToken = generateAccessToken({ id: user.id, username: user.username, role: user.role });
-      res.status(200).json({ accessToken });
-    });
-  };
-  
+
+    // Generate a new access token
+    const accessToken = generateAccessToken({ id: user.id, username: user.username, role: user.role });
+    res.status(200).json({ accessToken });
+  });
+};

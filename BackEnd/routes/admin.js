@@ -4,7 +4,7 @@ import salesRoutes from "./sales.js";
 import managementRoutes from "./management.js";
 import generalRoutes from "./general.js";
 import clientRoutes from "./client.js";
-import authMiddleware from '../middleware/authMiddleware'; // Import the auth middleware
+import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
