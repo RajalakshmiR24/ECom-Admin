@@ -38,6 +38,7 @@ const navItems = [
   {
     text: "Dashboard",
     icon: <HomeOutlined />,
+    path: "/e-com/admin/dashboard", // Added path for navigation
   },
   {
     text: "Client Facing",
@@ -46,18 +47,22 @@ const navItems = [
   {
     text: "Products",
     icon: <ShoppingCartOutlined />,
+    path: "/e-com/admin/products", // Added path for navigation
   },
   {
     text: "Customers",
     icon: <Groups2Outlined />,
+    path: "/e-com/admin/customers", // Added path for navigation
   },
   {
     text: "Transactions",
     icon: <ReceiptLongOutlined />,
+    path: "/e-com/admin/transactions", // Added path for navigation
   },
   {
     text: "Geography",
     icon: <PublicOutlined />,
+    path: "/e-com/admin/geography", // Added path for navigation
   },
   {
     text: "Sales",
@@ -66,18 +71,22 @@ const navItems = [
   {
     text: "Overview",
     icon: <PointOfSaleOutlined />,
+    path: "/e-com/admin/sales-overview", // Added path for navigation
   },
   {
     text: "Daily",
     icon: <TodayOutlined />,
+    path: "/e-com/admin/sales-daily", // Added path for navigation
   },
   {
     text: "Monthly",
     icon: <CalendarMonthOutlined />,
+    path: "/e-com/admin/sales-monthly", // Added path for navigation
   },
   {
     text: "Breakdown",
     icon: <PieChartOutlined />,
+    path: "/e-com/admin/sales-breakdown", // Added path for navigation
   },
   {
     text: "Management",
@@ -86,10 +95,12 @@ const navItems = [
   {
     text: "Admin",
     icon: <AdminPanelSettingsOutlined />,
+    path: "/e-com/admin/admin", // Added path for navigation
   },
   {
     text: "Performance",
     icon: <TrendingUpOutlined />,
+    path: "/e-com/admin/performance", // Added path for navigation
   },
 ];
 
@@ -109,7 +120,7 @@ const Sidebar = ({
 
   // set active path
   useEffect(() => {
-    setActive(pathname.substring(1));
+    setActive(pathname);
   }, [pathname]);
 
   return (
@@ -144,8 +155,8 @@ const Sidebar = ({
                     variant="h4"
                     fontWeight="bold"
                     onClick={() => {
-                      navigate("/dashboard");
-                      setActive("dashboard");
+                      navigate("/e-com/admin/dashboard");
+                      setActive("/e-com/admin/dashboard");
                     }}
                     sx={{
                       cursor: "pointer",
@@ -169,7 +180,7 @@ const Sidebar = ({
 
             {/* Sidebar items */}
             <List>
-              {navItems.map(({ text, icon }) => {
+              {navItems.map(({ text, icon, path }) => {
                 if (!icon) {
                   return (
                     <Typography key={text} sx={{ m: "2.25rem 0 1rem 3rem" }}>
@@ -178,23 +189,20 @@ const Sidebar = ({
                   );
                 }
 
-                // lowercase text
-                const lcText = text.toLowerCase();
-
                 return (
                   <ListItem key={text} title={text} disablePadding>
                     <ListItemButton
                       onClick={() => {
-                        navigate(`/${lcText}`);
-                        setActive(lcText);
+                        navigate(path); // Navigate using the defined path
+                        setActive(path); // Set active using the full path
                       }}
                       sx={{
                         backgroundColor:
-                          active === lcText
+                          active === path
                             ? theme.palette.secondary[300]
                             : "transparent",
                         color:
-                          active === lcText
+                          active === path
                             ? theme.palette.primary[600]
                             : theme.palette.secondary[100],
                       }}
@@ -204,7 +212,7 @@ const Sidebar = ({
                         sx={{
                           ml: "2rem",
                           color:
-                            active === lcText
+                            active === path
                               ? theme.palette.primary[600]
                               : theme.palette.secondary[200],
                         }}
@@ -214,7 +222,7 @@ const Sidebar = ({
 
                       {/* text */}
                       <ListItemText primary={text} />
-                      {active === lcText && (
+                      {active === path && (
                         <ChevronRightOutlined sx={{ ml: "auto" }} />
                       )}
                     </ListItemButton>

@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 
 const refreshAccessToken = async () => {
   try {
-    const response = await axios.post("/api/ngo/user/refresh-token", {
+    const response = await axios.post("/api/auth/refresh-token", {
       refreshToken: localStorage.getItem("refreshToken"),
     });
 

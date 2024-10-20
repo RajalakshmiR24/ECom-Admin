@@ -103,7 +103,8 @@ const Product = ({
 // Products
 const Products = () => {
   // get data
-  const { data, isLoading } = useGetProductsQuery();
+  const { data, isLoading, isError } = useGetProductsQuery(); // Also check for errors
+
   // is medium/large desktop
   const isNonMobile = useMediaQuery("(min-width: 1000px)");
 
@@ -113,52 +114,65 @@ const Products = () => {
       <Header title="PRODUCTS" subtitle="See your list of products." />
 
       {/* Content */}
-      {data || !isLoading ? (
-        <Box
-          mt="20px"
-          display="grid"
-          gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-          justifyContent="space-between"
-          rowGap="20px"
-          columnGap="1.33%"
-          sx={{
-            "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-          }}
-        >
-          {/* Loop over each product */}
-          {data.map(
-            ({
-              _id,
-              name,
-              description,
-              price,
-              rating,
-              category,
-              supply,
-              stat,
-            }) => (
-              <Product
-                key={_id}
-                _id={_id}
-                name={name}
-                description={description}
-                price={price}
-                rating={rating}
-                category={category}
-                supply={supply}
-                stat={stat}
-              />
-            )
-          )}
-        </Box>
-      ) : (
+      {isLoading ? (
         // Loader
         <Typography variant="h5" mt="20%" textAlign="center">
           Loading...
         </Typography>
+      ) : isError ? (
+        // Error message
+        <Typography variant="h5" mt="20%" textAlign="center">
+          An error occurred while fetching products. Please try again.
+        </Typography>
+      ) : (
+        // Ensure data is an array
+        Array.isArray(data) && data.length > 0 ? (
+          <Box
+            mt="20px"
+            display="grid"
+            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            justifyContent="space-between"
+            rowGap="20px"
+            columnGap="1.33%"
+            sx={{
+              "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+            }}
+          >
+            {/* Loop over each product */}
+            {data.map(
+              ({
+                _id,
+                name,
+                description,
+                price,
+                rating,
+                category,
+                supply,
+                stat,
+              }) => (
+                <Product
+                  key={_id}
+                  _id={_id}
+                  name={name}
+                  description={description}
+                  price={price}
+                  rating={rating}
+                  category={category}
+                  supply={supply}
+                  stat={stat}
+                />
+              )
+            )}
+          </Box>
+        ) : (
+          <Typography variant="h5" mt="20%" textAlign="center">
+            No products found.
+          </Typography>
+        )
       )}
     </Box>
   );
 };
+
 
 export default Products;

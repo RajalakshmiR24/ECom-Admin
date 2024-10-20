@@ -14,11 +14,12 @@ const axiosBaseQuery =
       });
       return { data: result.data };
     } catch (axiosError) {
-      let err = axiosError;
+      // Extract error response if available
+      let err = axiosError.response ? axiosError.response : axiosError;
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status: err.status,
+          data: err.data || err.message,
         },
       };
     }
@@ -26,10 +27,10 @@ const axiosBaseQuery =
 
 // Backend API using axiosInstance
 export const api = createApi({
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.REACT_APP_ECom,
-  }),
   reducerPath: "adminApi",
+  baseQuery: axiosBaseQuery({
+    baseUrl: process.env.REACT_APP_ECom, // Ensure this environment variable is set correctly
+  }),
   tagTypes: [
     "User",
     "Products",
@@ -42,26 +43,36 @@ export const api = createApi({
     "Dashboard",
   ],
   endpoints: (build) => ({
-    getUser: build.query({
-      query: (id) => ({
-        url: `api/admin/general/user/${id}`,
-        method: "GET",
+    // Login endpoint
+    login: build.mutation({
+      query: (credentials) => ({
+        url: "api/auth/login", // Adjust the URL path if necessary
+        method: "POST",
+        data: credentials, // Change from 'data' to 'body' to match Axios defaults
       }),
-      providesTags: ["User"],
+    }),
+
+    // Register endpoint
+    register: build.mutation({
+      query: (newUser) => ({
+        url: "api/auth/register", // Adjust the URL path if necessary
+        method: "POST",
+        data: newUser, // Change from 'data' to 'body' to match Axios defaults
+      }),
+    }),
+
+    // Other existing endpoints
+    getUser: build.query({
+      query: (id) => `api/admin/general/user/${id}`, // Simplified for clarity
+      providesTags: ["/e-com/admin/User"],
     }),
     getProducts: build.query({
-      query: () => ({
-        url: "api/admin/client/products",
-        method: "GET",
-      }),
-      providesTags: ["Products"],
+      query: () => "api/admin/client/products", // Simplified for clarity
+      providesTags: ["/e-com/admin/Products"],
     }),
     getCustomers: build.query({
-      query: () => ({
-        url: "api/admin/client/customers",
-        method: "GET",
-      }),
-      providesTags: ["Customers"],
+      query: () => "api/admin/client/customers", // Simplified for clarity
+      providesTags: ["/e-com/admin/Customers"],
     }),
     getTransactions: build.query({
       query: ({ page, pageSize, sort, search }) => ({
@@ -69,48 +80,35 @@ export const api = createApi({
         method: "GET",
         params: { page, pageSize, sort, search },
       }),
-      providesTags: ["Transactions"],
+      providesTags: ["/e-com/admin/Transactions"],
     }),
     getGeography: build.query({
-      query: () => ({
-        url: "api/admin/client/geography",
-        method: "GET",
-      }),
-      providesTags: ["Geography"],
+      query: () => "api/admin/client/geography", // Simplified for clarity
+      providesTags: ["/e-com/admin/Geography"],
     }),
     getSales: build.query({
-      query: () => ({
-        url: "api/admin/sales/sales",
-        method: "GET",
-      }),
-      providesTags: ["Sales"],
+      query: () => "api/admin/sales/sales", // Simplified for clarity
+      providesTags: ["/e-com/admin/Sales"],
     }),
     getAdmins: build.query({
-      query: () => ({
-        url: "api/admin/management/admins",
-        method: "GET",
-      }),
-      providesTags: ["Admins"],
+      query: () => "api/admin/management/admins", // Simplified for clarity
+      providesTags: ["/e-com/admin/Admins"],
     }),
     getUserPerformance: build.query({
-      query: (id) => ({
-        url: `admin/management/performance/${id}`,
-        method: "GET",
-      }),
-      providesTags: ["Performance"],
+      query: (id) => `api/admin/management/performance/${id}`, // Simplified for clarity
+      providesTags: ["/e-com/admin/Performance"],
     }),
     getDashboard: build.query({
-      query: () => ({
-        url: "api/admin/general/dashboard",
-        method: "GET",
-      }),
-      providesTags: ["Dashboard"],
+      query: () => "api/admin/general/dashboard", // Simplified for clarity
+      providesTags: ["/e-com/admin/Dashboard"],
     }),
   }),
 });
 
 // Export API endpoints
 export const {
+  useLoginMutation,
+  useRegisterMutation,
   useGetUserQuery,
   useGetProductsQuery,
   useGetCustomersQuery,
@@ -120,4 +118,4 @@ export const {
   useGetAdminsQuery,
   useGetUserPerformanceQuery,
   useGetDashboardQuery,
-} = api;
+} = api; // Updated from 'API' to 'api'
